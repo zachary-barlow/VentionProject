@@ -1,0 +1,15 @@
+.App {
+  text-align: center;
+}
+
+
+/* Card */
+.inventory-card {
+  width: 25rem;
+  margin: 2em 2em;
+}
+
+.collapse-card {
+  width: 25rem;
+  margin: -1.5em 2em 2em 2em;
+}
