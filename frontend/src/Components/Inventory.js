@@ -37,6 +37,23 @@ function Inventory() {
     }
   }, []);
 
+
+  // useEffect(() => {
+  //   fetch("http://localhost:5000/api/check", {
+  //     method: 'GET',
+  //     headers: {
+  //       'token': localStorage.getItem('token')
+  //     }
+  //   })
+  //   .then(res => res.json())
+  //   .then(data => {
+  //     console.log(data);
+  //   }).catch(err => {
+  //     console.log("Error: " + err);
+  //   });
+  // }, []);
+
+
   const formSubmit = (e, data) => {
     e.preventDefault();
     
@@ -91,7 +108,6 @@ function Inventory() {
     })
     .then(res => res.json())
     .then(data => {
-      console.log(data);
       setBooks(data[1]);
     }).catch(err => {
       console.log("Error: " + err);
@@ -100,7 +116,6 @@ function Inventory() {
 
   const deleteBook = (e, id) => {
     e.preventDefault();
-    console.log(id);
     // /api/books/delete/:id
     fetch(`http://localhost:5000/api/books/delete/${id}`, {
       method: 'DELETE',
@@ -114,6 +129,11 @@ function Inventory() {
     }).catch(err => {
       console.log("Error: " + err);
     });
+  }
+
+
+  const handleChange = (e) => {
+    console.log(e);
   }
 
   return(
@@ -132,7 +152,6 @@ function Inventory() {
 
             <Form inline>
               <FormControl type="text" placeholder="Search" className="mr-sm-2" />
-              <Button variant="outline-primary">Search</Button>
             </Form>
           </Col>
 

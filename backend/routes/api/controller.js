@@ -1,5 +1,6 @@
 let knex = require('../../db/knex/knex');
 const jwt = require('jsonwebtoken');
+const cron = require('node-cron');
 
 exports.getBooks = (req, res) => {
   knex.select().from('books').then(books => {
@@ -131,4 +132,14 @@ exports.login = (req, res) => {
       }).catch(err => {
         console.log(err);
       })
+}
+
+
+
+
+
+exports.check = (req, res) => {
+  cron.schedule('* * * * *', () => {
+    console.log('running a task every minute');
+  });
 }

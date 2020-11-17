@@ -63,12 +63,12 @@ function EditForm({ info, func }) {
 
       <Form.Group controlId="formGroupPrice">
         <Form.Label>Price</Form.Label>
-        <Form.Control type="number" value={price} step=".01" onChange={(e) => setPrice(e.target.value)}/>
+        <Form.Control type="number" value={price} step=".01" min="0" onChange={(e) => setPrice(e.target.value)}/>
       </Form.Group>
 
       <Form.Group controlId="formGroupQuantity">
         <Form.Label>Quantity</Form.Label>
-        <Form.Control type="number" value={quantity} onChange={(e) => setQuantity(e.target.value)}/>
+        <Form.Control type="number" value={quantity} min="0" onChange={(e) => setQuantity(e.target.value)}/>
       </Form.Group>
 
       <Button variant="info" type="submit">Submit</Button>

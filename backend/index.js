@@ -19,6 +19,7 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }));
 
 const inv = require('./routes/api/controller.js');
+const { checkOptionalTime } = require('tarn/dist/utils');
 
 /* ------------------------------------------------------------------------------ */
 /*                                  GET REQUESTS                                  */
@@ -35,6 +36,11 @@ app.get('/api/books/:title', verify, (req, res) => {
   inv.getBook(res, req.params.title); // get the individual book back
 });
 
+
+app.get('/api/check', verify, (req, res) => {
+  console.log(`Request method: ${req.method} Endpoint: ${req.url}`);
+  inv.check(req,res); // get the individual book back
+});
 
 
 /* ------------------------------------------------------------------------------ */

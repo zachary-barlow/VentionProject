@@ -58,7 +58,7 @@ function FormModal({ show, handleClose,  func}) {
 
           <Form.Group controlId="formGroupPassword">
             <Form.Label>Price</Form.Label>
-            <Form.Control type="number" placeholder="Price of Book" onChange={(e) => setPrice(e.target.value)}/>
+            <Form.Control type="number" placeholder="Price of Book" min="0" onChange={(e) => setPrice(e.target.value)}/>
           </Form.Group>
 
           {/* <Form.Group controlId="formGroupPassword">
