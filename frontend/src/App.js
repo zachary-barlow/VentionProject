@@ -11,8 +11,6 @@ import Inventory from './Components/Inventory';
 import Login from './Components/Login';
 
 function App() {
-
-
   return (
     <Router>
       <Switch>

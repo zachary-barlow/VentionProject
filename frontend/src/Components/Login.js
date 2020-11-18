@@ -28,14 +28,14 @@ function Login() {
        },
        body: JSON.stringify(data) // We send data in JSON format
     })
-    .then(res => res.json())
+    .then(res => res.text())
     .then(dat => {
       if(dat) {
-        localStorage.setItem('token', dat.token);
+        localStorage.setItem('token', dat);
         setRedirect(true);
       }
     }).catch(err => {
-      console.log("Error: " + err);
+      console.log(err);
     });
   }
 

@@ -1,5 +1,4 @@
 import React, {useEffect, useState} from 'react';
-// import io from 'socket.io-client';
 
 import Book from './Book';
 import Alert from './Alert';
@@ -7,39 +6,46 @@ import Alert from './Alert';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-
 import {Button, Form, FormControl} from 'react-bootstrap';
 
 import FormModal from './Modal';
 
-// let socket;
 
-function Inventory() {
+function Inventory({url}) {
   const [show, setShow] = useState(false);
-  const [filtered, setFiltered] = useState([]);
   const [books, setBooks] = useState([]);
-  const [stock, setStock] = useState([{
-    id: 1, 
-    title: 'Book 1', 
-    author: 'Some Guy', 
-    publisher: 'publisher', 
-    yearPublished: '2018', 
-    price: 42.24, 
-    quantity: 0
-  }]);
+  const [stock, setStock] = useState([
+    {
+      id: 1, 
+      title: 'Book 1', 
+      author: 'Some Guy', 
+      publisher: 'publisher', 
+      yearPublished: '2018', 
+      price: 42.24, 
+      quantity: 3
+    }]);
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
 
-  // const ENDPOINT = "http://127.0.0.1:5000/";
-
   useEffect(() => {
-
     allBooks();
     return () => {
       localStorage.clear();
     }
+  }, []);
+
+  useEffect(() => {
+    const events = new EventSource('http://localhost:5000/api/check');
+
+    events.onopen = function() {
+      console.log("opened");
+    }
+
+    events.onmessage = function(event){
+      setStock(JSON.parse(event.data));
+    };
   }, []);
 
   const allBooks = () => {
@@ -57,21 +63,9 @@ function Inventory() {
       console.log("Error: " + err);
     });
   }
-  // useEffect(() => {
-  //   socket = io(ENDPOINT);
-  //   socket.emit('check', localStorage.getItem('token'));
 
-  //   return () => {
-  //     socket.emit('disconnect');
-  //     socket.off();
-  //   }
-  // }, [ENDPOINT]);
 
-  // useEffect(() => {
-  //   socket.on('quantity', ({stock}) => {
-  //     setStock(stock);
-  //   });
-  // }, []);
+
 
 
   const formSubmit = (e, data) => {

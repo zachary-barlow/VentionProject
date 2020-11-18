@@ -2,8 +2,6 @@ const knex = require('../../db/knex/knex');
 const jwt = require('jsonwebtoken');
 const cron = require('node-cron');
 
-const check = require('./check.js');
-
 exports.getBooks = (req, res) => {
   knex.select().from('books').then(books => {
     let response = [
@@ -13,7 +11,7 @@ exports.getBooks = (req, res) => {
       books
     ];
 
-    res.send(response);
+    res.send(JSON.stringify(response));
   }).catch(err => console.log(err));
 }
 
@@ -21,9 +19,8 @@ exports.getBook = (res, title) => {
   knex.select()
   .from('books')
   .where('title', 'like', `%${title}%`).then(books => {
-
     res.send(JSON.stringify(books));
-  });
+  }).catch(err => console.log(err));
 }
 
 exports.createBook = (req, res) => {
@@ -73,7 +70,7 @@ exports.updateBook = (req, res) => {
           ];
     
           res.send(JSON.stringify(response));
-        });
+        }).catch(err => console.log(err));
   });
 }
 
@@ -93,8 +90,8 @@ exports.updateQuantity = (req, res) => {
           ];
     
           res.send(JSON.stringify(response));
-        });
-  });
+        }).catch(err => console.log(err));
+  }).catch(err => console.log(err));
 }
 
 
@@ -113,8 +110,8 @@ exports.deleteBook = (res, id) => {
           ];
     
           res.send(JSON.stringify(response));
-        });
-  })
+        }).catch(err => console.log(err));
+  }).catch(err => console.log(err));
 }
 
 
@@ -126,32 +123,41 @@ exports.login = (req, res) => {
       .then(user => {
         if(user.length === 1) {
           const token = jwt.sign({user: user}, process.env.SECRET_TOKEN_KEY);
-          res.header('token', token);
-          res.send(JSON.stringify({token:token}));
+          res.header('token', token).send(token);
         } else {
-          res.sendStatus(403);
+          return res.status(403).json({
+            status: 'error',
+            error: 'User does not exist'
+          });
         }
       }).catch(err => {
         console.log(err);
-      })
+      });
 }
 
 
 
-exports.check = () => {
-  let outOfStock = [];
-  cron.schedule('* * * * *', () => {
-    console.log('running a task every minute. ');
+exports.check = (req, res) => {
+  try {
+    let outOfStock = [];
+    let task = cron.schedule('* * * * *', () => {
+      console.log('running a task every minute. ');
+      
+      let ids = outOfStock.reduce((a, o) => (a.push(o.id), a), []);
+      res.getData(outOfStock, ids);
+    });
 
-    let ids = outOfStock.reduce((a, o) => (a.push(o.id), a), []);
-      // get all data from database where quantity == 0
-    knex.from('books')
-        .select()
-        .where({quantity: 0})
-        .then(books => {
-          outOfStock = outOfStock.concat(books.filter(book => !ids.includes(book.id)));
-          return outOfStock;
-        }
-    );
-  });
+    task.start();
+
+    res.on('close', () => {
+      console.log('Connection closed');
+      task.destroy();
+      res.end();
+    });
+  }catch(err) {
+    return res.status(400).json({
+      status: 'error',
+      error: 'invalid check'
+    });
+  }
 }
