@@ -1,6 +1,8 @@
-let knex = require('../../db/knex/knex');
+const knex = require('../../db/knex/knex');
 const jwt = require('jsonwebtoken');
 const cron = require('node-cron');
+
+const check = require('./check.js');
 
 exports.getBooks = (req, res) => {
   knex.select().from('books').then(books => {
@@ -136,10 +138,20 @@ exports.login = (req, res) => {
 
 
 
-
-
-exports.check = (req, res) => {
+exports.check = () => {
+  let outOfStock = [];
   cron.schedule('* * * * *', () => {
-    console.log('running a task every minute');
+    console.log('running a task every minute. ');
+
+    let ids = outOfStock.reduce((a, o) => (a.push(o.id), a), []);
+      // get all data from database where quantity == 0
+    knex.from('books')
+        .select()
+        .where({quantity: 0})
+        .then(books => {
+          outOfStock = outOfStock.concat(books.filter(book => !ids.includes(book.id)));
+          return outOfStock;
+        }
+    );
   });
 }

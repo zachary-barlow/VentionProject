@@ -25,10 +25,10 @@ function Book({ info, update, delBook, formSubmit }) {
           <Row>
             <Col sm={9}>
               <Card.Body>
-                {info.quantity == 0 ?
+                {info.quantity !== 0 ?
                   <Card.Title>{info.title}: ({info.quantity})</Card.Title>
                   :
-                  <Card.Title>{info.title}: (<span variant="danger">Out of Stock</span>)</Card.Title>
+                  <Card.Title>{info.title}: (<span className="text-danger">Out of Stock</span>)</Card.Title>
                 }
                 
                 <Card.Subtitle className="mb-2 text-muted">Author: {info.author}</Card.Subtitle>

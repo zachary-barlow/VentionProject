@@ -19,10 +19,11 @@ function Login() {
       "username": username,
       "password": password
     }
-
+    
     fetch("http://localhost:5000/login", {
       method: 'POST',
       headers: {
+        // 'Access-Control-Allow-Origin' : 'http://localhost:5000/',
         'Content-type': 'application/json; charset=UTF-8' // Indicates the content 
        },
        body: JSON.stringify(data) // We send data in JSON format
@@ -30,7 +31,6 @@ function Login() {
     .then(res => res.json())
     .then(dat => {
       if(dat) {
-        console.log(dat);
         localStorage.setItem('token', dat.token);
         setRedirect(true);
       }

@@ -1,6 +1,8 @@
 import React, {useEffect, useState} from 'react';
+import io from 'socket.io-client';
 
 import Book from './Book';
+import Alert from './Alert';
 
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
@@ -10,18 +12,32 @@ import {Button, Form, FormControl} from 'react-bootstrap';
 
 import FormModal from './Modal';
 
+let socket;
 
 function Inventory() {
   const [show, setShow] = useState(false);
   const [books, setBooks] = useState([]);
+  const [stock, setStock] = useState([{
+    id: 1, 
+    title: 'Book 1', 
+    author: 'Some Guy', 
+    publisher: 'publisher', 
+    yearPublished: '2018', 
+    price: 42.24, 
+    quantity: 0
+  }]);
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+
+
+  const ENDPOINT = "http://localhost:5000/";
 
   useEffect(() => {
     fetch("http://localhost:5000/api/books", {
       method: 'GET',
       headers: {
+        "Access-Control-Allow-Origin": "*",
         'token': localStorage.getItem('token')
       }
     })
@@ -38,20 +54,21 @@ function Inventory() {
   }, []);
 
 
-  // useEffect(() => {
-  //   fetch("http://localhost:5000/api/check", {
-  //     method: 'GET',
-  //     headers: {
-  //       'token': localStorage.getItem('token')
-  //     }
-  //   })
-  //   .then(res => res.json())
-  //   .then(data => {
-  //     console.log(data);
-  //   }).catch(err => {
-  //     console.log("Error: " + err);
-  //   });
-  // }, []);
+  useEffect(() => {
+    socket = io(ENDPOINT);
+    socket.emit('check', localStorage.getItem('token'));
+
+    return () => {
+      socket.emit('disconnect');
+      socket.off();
+    }
+  }, [ENDPOINT]);
+
+  useEffect(() => {
+    socket.on('quantity', ({stock}) => {
+      setStock(stock);
+    });
+  }, []);
 
 
   const formSubmit = (e, data) => {
@@ -153,6 +170,15 @@ function Inventory() {
             <Form inline>
               <FormControl type="text" placeholder="Search" className="mr-sm-2" />
             </Form>
+            
+            <div className="mt-3">
+              {stock.map((book, key) => {
+                return(
+                  <Alert key={key} book={book} />
+                );
+              })}
+            </div>
+
           </Col>
 
         </Row>
