@@ -11,24 +11,18 @@ import {Button, Form, FormControl} from 'react-bootstrap';
 import FormModal from './Modal';
 
 
-function Inventory({url}) {
+function Inventory() {
   const [show, setShow] = useState(false);
   const [books, setBooks] = useState([]);
-  const [stock, setStock] = useState([
-    {
-      id: 1, 
-      title: 'Book 1', 
-      author: 'Some Guy', 
-      publisher: 'publisher', 
-      yearPublished: '2018', 
-      price: 42.24, 
-      quantity: 3
-    }]);
+  const [stock, setStock] = useState([]);
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
 
+  /*
+    Get all books and display them then clear localstorage token
+  */  
   useEffect(() => {
     allBooks();
     return () => {
@@ -36,23 +30,27 @@ function Inventory({url}) {
     }
   }, []);
 
+  /*
+      This creates the event to listen to the server to trigger
+      the event to schedule every minute a check on the database to get
+      all out of stock values
+  */
   useEffect(() => {
     const events = new EventSource('http://localhost:5000/api/check');
-
-    events.onopen = function() {
-      console.log("opened");
-    }
 
     events.onmessage = function(event){
       setStock(JSON.parse(event.data));
     };
   }, []);
 
+
+  /*
+    API call to get all books
+  */
   const allBooks = () => {
     fetch("http://localhost:5000/api/books", {
       method: 'GET',
       headers: {
-        // "Access-Control-Allow-Origin": "*",
         'token': localStorage.getItem('token')
       }
     })
@@ -67,7 +65,9 @@ function Inventory({url}) {
 
 
 
-
+  /*
+    API request to update a specific books entire data
+  */
   const formSubmit = (e, data) => {
     e.preventDefault();
     
@@ -87,6 +87,9 @@ function Inventory({url}) {
     });
   }
 
+  /*
+    API request to create a new book and update the books state
+  */
   const handleSubmit = (e, data) => {
     e.preventDefault();
     fetch("http://localhost:5000/api/books/create", {
@@ -106,6 +109,11 @@ function Inventory({url}) {
     });
   }
 
+
+  /*
+    Simple API request to update the quantity of a book by clicking a button
+    then updating the books again to re-render
+  */
   const updateQuantity = (info, quant) => {
     if(quant === 'inc') {
       info.quantity += 1;
@@ -123,12 +131,15 @@ function Inventory({url}) {
     })
     .then(res => res.json())
     .then(data => {
-      setBooks(data[1]);
+      // setBooks(data[1]);
     }).catch(err => {
       console.log("Error: " + err);
     });
   }
 
+  /*
+    API Delete request to delete a specific book from the database inventory
+  */
   const deleteBook = (e, id) => {
     e.preventDefault();
     // /api/books/delete/:id
@@ -147,6 +158,9 @@ function Inventory({url}) {
   }
 
 
+  /*
+    Search feature to search books off of title
+  */ 
   const handleChange = (e) => {
     if(e.target.value !== '') {
       fetch(`http://localhost:5000/api/books/${e.target.value}`, {

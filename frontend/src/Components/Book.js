@@ -9,7 +9,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
 
-import EditForm from './EditForm';
+import EditForm from './Forms/EditForm';
 
 function Book({ info, update, delBook, formSubmit }) {
   const [open, setOpen] = useState(false);

@@ -8,7 +8,7 @@ import {
 
 import Header from './Components/Header';
 import Inventory from './Components/Inventory';
-import Login from './Components/Login';
+import Login from './Components/Forms/Login';
 
 function App() {
   return (
