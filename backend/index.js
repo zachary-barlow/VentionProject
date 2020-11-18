@@ -61,7 +61,6 @@ app.post('/api/books/create', verify, (req, res) => {
 });
 
 app.post('/login', (req, res) => {
-  console.log(req.url);
   console.log(`Request method: ${req.method} Endpoint: ${req.url}`);
   inv.login(req, res);
 });
@@ -109,4 +108,6 @@ io.on('connection', (socket) => {
     console.log('disconnect');
   });
 });
+
+
 server.listen(PORT, () => console.log(`Server has started on port ${PORT}`));

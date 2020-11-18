@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import io from 'socket.io-client';
+// import io from 'socket.io-client';
 
 import Book from './Book';
 import Alert from './Alert';
@@ -12,10 +12,11 @@ import {Button, Form, FormControl} from 'react-bootstrap';
 
 import FormModal from './Modal';
 
-let socket;
+// let socket;
 
 function Inventory() {
   const [show, setShow] = useState(false);
+  const [filtered, setFiltered] = useState([]);
   const [books, setBooks] = useState([]);
   const [stock, setStock] = useState([{
     id: 1, 
@@ -31,13 +32,21 @@ function Inventory() {
   const handleShow = () => setShow(true);
 
 
-  const ENDPOINT = "http://localhost:5000/";
+  // const ENDPOINT = "http://127.0.0.1:5000/";
 
   useEffect(() => {
+
+    allBooks();
+    return () => {
+      localStorage.clear();
+    }
+  }, []);
+
+  const allBooks = () => {
     fetch("http://localhost:5000/api/books", {
       method: 'GET',
       headers: {
-        "Access-Control-Allow-Origin": "*",
+        // "Access-Control-Allow-Origin": "*",
         'token': localStorage.getItem('token')
       }
     })
@@ -47,28 +56,22 @@ function Inventory() {
     }).catch(err => {
       console.log("Error: " + err);
     });
+  }
+  // useEffect(() => {
+  //   socket = io(ENDPOINT);
+  //   socket.emit('check', localStorage.getItem('token'));
 
-    return () => {
-      localStorage.clear();
-    }
-  }, []);
+  //   return () => {
+  //     socket.emit('disconnect');
+  //     socket.off();
+  //   }
+  // }, [ENDPOINT]);
 
-
-  useEffect(() => {
-    socket = io(ENDPOINT);
-    socket.emit('check', localStorage.getItem('token'));
-
-    return () => {
-      socket.emit('disconnect');
-      socket.off();
-    }
-  }, [ENDPOINT]);
-
-  useEffect(() => {
-    socket.on('quantity', ({stock}) => {
-      setStock(stock);
-    });
-  }, []);
+  // useEffect(() => {
+  //   socket.on('quantity', ({stock}) => {
+  //     setStock(stock);
+  //   });
+  // }, []);
 
 
   const formSubmit = (e, data) => {
@@ -91,6 +94,7 @@ function Inventory() {
   }
 
   const handleSubmit = (e, data) => {
+    e.preventDefault();
     fetch("http://localhost:5000/api/books/create", {
       method: 'POST',
       headers: {
@@ -150,7 +154,22 @@ function Inventory() {
 
 
   const handleChange = (e) => {
-    console.log(e);
+    if(e.target.value !== '') {
+      fetch(`http://localhost:5000/api/books/${e.target.value}`, {
+        method: 'GET',
+        headers: {
+          'token': localStorage.getItem('token')
+        }
+      })
+      .then(res => res.json())
+      .then(data => {
+        setBooks(data);
+      }).catch(err => {
+        console.log("Error: " + err);
+      });
+    } else {
+      allBooks();
+    }
   }
 
   return(
@@ -168,7 +187,7 @@ function Inventory() {
             <FormModal show={show} handleClose={handleClose}  func={handleSubmit}/>
 
             <Form inline>
-              <FormControl type="text" placeholder="Search" className="mr-sm-2" />
+              <FormControl type="text" placeholder="Search" className="mr-sm-2" onChange={(e) => handleChange(e)}/>
             </Form>
             
             <div className="mt-3">
