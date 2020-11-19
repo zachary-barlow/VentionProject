@@ -1,6 +1,6 @@
 # Bookstore Inventory system
 
-###login credentials: 
+login credentials: 
   username: user1
   password: user1
   
