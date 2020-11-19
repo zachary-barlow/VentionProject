@@ -1,8 +1,8 @@
 # Bookstore Inventory system
 
-login credentials: 
-  username: user1
-  password: user1
+##Login credentials: 
+  *username: user1
+  *password: user1
   
   
 Frontend: ReactJs, Bootstrap
