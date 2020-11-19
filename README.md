@@ -9,5 +9,4 @@
 -------------------------------------------------
 ## Images:
 
-- Login Screen:
-![Login Screen](/images/login.png)
+![Login Screen](./images/login.png)
