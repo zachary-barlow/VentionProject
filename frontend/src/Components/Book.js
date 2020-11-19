@@ -33,13 +33,14 @@ function Book({ info, update, delBook, formSubmit }) {
                 
                 <Card.Subtitle className="mb-2 text-muted">Author: {info.author}</Card.Subtitle>
                 <Card.Subtitle className="mb-2 text-muted">Publisher: {info.publisher}</Card.Subtitle>
-                <Card.Text>Some quick example text to build on the card title and make up the bulk of the card's content.</Card.Text>
+                <Card.Text>Some quick example text to have for</Card.Text>
               </Card.Body>
               <Button onClick={() => setOpen(!open)}>Edit</Button>
               <Button className="m-2" variant="outline-danger" onClick={(e) => delBook(e, info.id)}>Delete</Button>
             </Col>
-            <Col sm={3}>
-              <ButtonGroup size="sm">
+            <Col sm={3} className="d-flex flex-column">
+              <strong className="font-weight-bold align-self-end">${info.price}</strong>
+              <ButtonGroup size="sm" className="mt-5">
                 <Button variant="success" onClick={() => update(info, 'inc')}>+</Button>
                 {info.quantity > 0 &&
                   <Button variant="danger" onClick={() => update(info, 'dec')}>-</Button>

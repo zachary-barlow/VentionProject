@@ -131,7 +131,7 @@ function Inventory() {
     })
     .then(res => res.json())
     .then(data => {
-      // setBooks(data[1]);
+      setBooks(data[1]);
     }).catch(err => {
       console.log("Error: " + err);
     });
